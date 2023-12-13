@@ -1,0 +1,22 @@
+
+# Ignore node_modules for Angular
+frontend/node_modules/
+
+# Ignore any compiled Python files
+backend/venv/__pycache__/
+backend/venv/lib/
+backend/venv/*.pyc
+
+# Ignore any compiled TypeScript files
+frontend/dist/
+frontend/*.js
+frontend/*.js.map
+
+# Ignore logs and other generated files
+backend/logs/
+frontend/logs/
+
+# Ignore environment-specific files
+backend/.env
+frontend/.env
+
