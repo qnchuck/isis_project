@@ -3,14 +3,45 @@
 frontend/node_modules/
 
 # Ignore any compiled Python files
-backend/venv/__pycache__/
-backend/venv/lib/
-backend/venv/*.pyc
+backend/__pycache__/
+backend/lib/
+backend/*.pyc
 
 # Ignore any compiled TypeScript files
 frontend/dist/
 frontend/*.js
 frontend/*.js.map
+*.csv
+*.h5
+# Flask
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+
+# Angular
+node_modules/
+/dist/
+/e2e/*.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/test/
+
+# Visual Studio Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Editors
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # Ignore logs and other generated files
 backend/logs/

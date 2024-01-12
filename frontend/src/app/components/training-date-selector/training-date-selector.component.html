@@ -1,0 +1,12 @@
+
+<div>
+  <label for="dateFrom">Select Training Start Date:</label>
+  <input type="date" id="dateFrom" [(ngModel)]="selectedDateFrom" />
+</div>
+
+<div>
+  <label for="dateTo">Select Training End Date:</label>
+  <input type="date" id="dateTo" [(ngModel)]="selectedDateTo" />
+</div>
+
+<button (click)="sendDatesForTraining()">Send Dates</button>

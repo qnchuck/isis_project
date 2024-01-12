@@ -14,12 +14,17 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-	this.getData();
+	// this.getData();
   }
 
   getData() {
 	this._apiservice.getdata().subscribe(res=>{
   	this.newdata=res;
 	})
+  }
+
+  handleForecastStart(event: { date: string, days: number }) {
+    // Implement your logic to start the forecast using the provided date and number of days.
+    console.log('Starting forecast for', event);
   }
 }

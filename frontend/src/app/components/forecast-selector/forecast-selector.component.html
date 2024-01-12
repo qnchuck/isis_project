@@ -1,0 +1,21 @@
+<div class="forecast-selector-container">
+  
+    <label>Date:</label>
+    <input type="date" [(ngModel)]="selectedDate">
+  
+    <div>
+      <label for="numOfDays">Number of Days:</label>
+      <select id="numOfDays" [(ngModel)]="numberOfDays">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+      </select>
+    </div>
+  
+    <button (click)="startForecast()">Start Forecast</button>
+  </div>
+  

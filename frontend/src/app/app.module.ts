@@ -1,16 +1,27 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
-
+import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { FolderBrowserComponent } from './components/folder-browser/folder-browser.component';
+import { TrainingDateSelectorComponent } from './components/training-date-selector/training-date-selector.component';
+import { FormsModule } from '@angular/forms';
+import { NgChartsModule } from 'ng2-charts';
+import { ForecastSelectorComponent } from './components/forecast-selector/forecast-selector.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    FolderBrowserComponent,
+    TrainingDateSelectorComponent,
+    ForecastSelectorComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    NgChartsModule,
   ],
   providers: [
     provideClientHydration()
