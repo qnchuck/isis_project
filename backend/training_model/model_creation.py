@@ -48,8 +48,11 @@ class ModelCreation(ModelConfiguration):
         
         # Extract the corresponding rows from the transformed array
         extracted_data = transformed_array[selected_indices]
-        
-        return extracted_data
+        datetime_column = original_dataframe.loc[mask, 'datetime']
+    
+        return datetime_column, extracted_data
+
+        # return extracted_data
     
     def fit_transform_pipeline(self, df_after_dropping_columns):
         # print(df_after_dropping_columns.columns.tolist())

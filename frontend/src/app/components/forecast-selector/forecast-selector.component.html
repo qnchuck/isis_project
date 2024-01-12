@@ -17,5 +17,38 @@
     </div>
   
     <button (click)="startForecast()">Start Forecast</button>
+  
+ 
+  <!-- table.component.html -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Date Time</th>
+          <th>Load</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of forecastData">
+          <td>{{ s.datetime }}</td>
+          <td>{{ s.Load }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
   
+  <table style="border: black;">
+    <thead>
+      <tr>
+        <th>datetime</th>
+        <th>Load</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of forecastData">
+        <td >{{ s.datetime }}</td>
+        <td >{{ s.Load }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

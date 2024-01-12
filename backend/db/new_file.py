@@ -62,8 +62,9 @@ def extract_data_by_date_range( transformed_array, original_dataframe, start_dat
     
     # Extract the corresponding rows from the transformed array
     extracted_data = transformed_array[selected_indices]
+    datetime_column = original_dataframe.loc[mask, 'datetime']
     
-    return extracted_data 
+    return datetime_column, extracted_data
 
  
  
@@ -77,14 +78,24 @@ tf = mc.fit_transform_pipeline(df)
 loaded_model = load_model('my_model_2.h5')
 print(loaded_model.summary())
 
-print(tf.shape)
+# print(tf.shape)
 # print(tf1.shape)
 # print(d3.shape)
-print(df.shape)
+# print(df.shape)
 
 
 extracted_data = extract_data_by_date(tf, df1, '2021-08-01', '2021-08-10')
-extracted_data = extract_data_by_date_range(tf,df1, '2021-08-01', 10)
-print(extracted_data.shape)
+datetimec, extracted_data = extract_data_by_date_range(tf,df1, '2021-08-01', 10)
 results = loaded_model.predict(extracted_data)
-print(results)
+results_df = pd.DataFrame({'Load': results.flatten()})
+datetimec= pd.DataFrame({'datetime': datetimec})
+datetimec = datetimec.reset_index()
+merged_df = pd.concat([datetimec, results_df], axis=1)
+merged_df = merged_df.drop('index', axis=1)
+
+
+
+json_data = merged_df.to_json(orient='records')
+print(json_data)
+# merged_df = pd.merge([pd.DataFrame({'datetime': datetimec}), results_df])
+# print(merged_df)

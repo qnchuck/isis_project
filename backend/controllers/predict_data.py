@@ -16,12 +16,8 @@ def train_model():
         print(number_of_days)
         
         result = predict_service.predict(datefrom, number_of_days)
-        nested_list = result.tolist()
 
-        # Convert the nested list to JSON
-        json_data = json.dumps(nested_list)
-
-        return jsonify({'success': True,'res': json_data})
+        return jsonify({'success': True,'res': result})
     except Exception as e:
         print(e)
         return jsonify({'success': False, 'error': str(e)})

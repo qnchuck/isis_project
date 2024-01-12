@@ -18,32 +18,25 @@ class PredictService:
         
         # print(date_from)
         df,df_ = db_handler.read_preprocessed_data()
-        print(df.shape)
 
         prepared_data = self.model_creation.fit_transform_pipeline(df_)
         
-        print(df.shape)
-        print(prepared_data.shape)
-        extracted_data = self.model_creation.extract_data_by_date_range(prepared_data, df, date_from, num_of_days)
+        date_time_column, extracted_data = self.model_creation.extract_data_by_date_range(prepared_data, df, date_from, num_of_days)
         # extracted_data = self.model_creation.extract_data_by_date(prepared_data, df, '2021-08-01', '2021-08-07')
         
         results = loaded_model.predict(extracted_data)
 
-        return results
+        results_df = pd.DataFrame({'Load': results.flatten()})
+        datetimec= pd.DataFrame({'datetime': date_time_column})
+        datetimec = datetimec.reset_index()
 
+        datetimec['datetime'] = pd.to_datetime(datetimec['datetime']).dt.strftime('%Y-%m-%d %H:%M:%S')
+        print(datetimec)
+        # Concatenate DataFrames
+        merged_df = pd.concat([datetimec, results_df], axis=1)
+        merged_df = merged_df.drop('index', axis=1)
 
-    def extract_data_by_date_range( transformed_array, original_dataframe, start_date, num_days):
-        # Ensure datetime column is in datetime format
-        original_dataframe['datetime'] = pd.to_datetime(original_dataframe['datetime'])
-        
-        # Calculate the end date based on the start date and number of days
-        end_date = pd.to_datetime(start_date) + pd.DateOffset(days=num_days)
-        
-        # Find the indices of rows in the original DataFrame that fall within the specified date range
-        mask = (original_dataframe['datetime'] >= start_date) & (original_dataframe['datetime'] <= end_date)
-        selected_indices = np.where(mask)[0]
-        
-        # Extract the corresponding rows from the transformed array
-        extracted_data = transformed_array[selected_indices]
-        
-        return extracted_data 
+        # Convert the merged DataFrame to JSON
+        json_data = merged_df.to_json(orient='records')
+        print(json_data)
+        return json_data

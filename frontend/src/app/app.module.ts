@@ -8,6 +8,8 @@ import { TrainingDateSelectorComponent } from './components/training-date-select
 import { FormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { ForecastSelectorComponent } from './components/forecast-selector/forecast-selector.component';
+import { MatTableModule } from '@angular/material/table';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -22,9 +24,12 @@ import { ForecastSelectorComponent } from './components/forecast-selector/foreca
     FormsModule,
     HttpClientModule,
     NgChartsModule,
+    BrowserAnimationsModule,
+    MatTableModule
   ],
   providers: [
-    provideClientHydration()
+    provideClientHydration(),
+    
   ],
   bootstrap: [AppComponent]
 })
