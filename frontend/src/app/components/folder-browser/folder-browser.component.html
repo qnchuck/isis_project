@@ -1,12 +1,8 @@
-<!-- src/app/components/your-component/your-component.component.html -->
-<div>
-  <h2>Folder Selector</h2>
-  <label for="folderInput">Choose a folder:</label>
-  <input type="file" id="folderInput" (change)="onFolderSelected($event)" webkitdirectory directory />
-  <button (click)="sendFolderPath()">Send Folder Path</button>
+<!-- folder-browser.component.html -->
+<div class="text-center">
+  <input class="form-control" type="file" (change)="onChange($event)" multiple directory webkitdirectory>
 
-  <div *ngIf="folderPath">
-    <h3>Selected Folder Path:</h3>
-    <p>{{ folderPath }}</p>
-  </div>
+  <button (click)="onUpload()" class="btn btn-success" [disabled]="loading">
+    {{ loading ? 'Uploading...' : 'Upload' }}
+  </button>
 </div>

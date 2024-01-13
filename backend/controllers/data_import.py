@@ -1,22 +1,19 @@
 # my_flask_app/controllers/file_controller.py
 from flask import Blueprint, request, jsonify
 from flask_cors import CORS
+from services.files_service import FilesService
 import os
 
+
 file_controller = Blueprint('file_controller', __name__)
+file_service = FilesService()
+@file_controller.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return {'error': 'No file part'}, 400
 
-@file_controller.route('/folder_path', methods=['POST'])
-def process_folder():
-    try:
-        print('eeseesssdadddas')
-        data = request.get_json()
-        folder_path = data
-        print(folder_path)
-        # Add your logic here to process the folder path
-        # For example, you can list files in the folder:
-        files = os.listdir(folder_path)
+    file = request.files['file']
 
-        return jsonify({'success': True, 'files': files})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
-
+    if file_service.save_file_to_specific_directory(file):
+        return {'message': 'File uploaded successfully'}, 200
+    return {'error': 'Invalid file'}, 400

@@ -25,7 +25,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     NgChartsModule,
     BrowserAnimationsModule,
-    MatTableModule
+    MatTableModule,
+    
   ],
   providers: [
     provideClientHydration(),

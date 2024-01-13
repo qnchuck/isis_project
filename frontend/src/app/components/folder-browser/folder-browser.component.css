@@ -1,0 +1,18 @@
+/* file-upload.component.css */
+.drop-zone {
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    cursor: pointer;
+  }
+  
+  .dropped {
+    background-color: #eee;
+  }
+  
+  .file-list {
+    margin-top: 20px;
+  }
+  

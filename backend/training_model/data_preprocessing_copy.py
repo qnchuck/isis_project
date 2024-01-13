@@ -17,11 +17,11 @@ print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('
 
 db_handler = DatabaseHandler()
 
-folder_path_weather = "/home/qnchuck/Desktop/csv_data/NYS Weather Data/New York City, NY"  
+folder_path_weather = "/home/qnchuck/Desktop/isis/backend/uploads/weather"  
 file_pattern_weather = "New York City,*.csv"
 
 excel_file_path = '/home/qnchuck/Desktop/csv_data/US Holidays 2018-2021.xlsx'
-root_folder_load = "/home/qnchuck/Desktop/csv_data/NYS Load  Data"  
+root_folder_load = "/home/qnchuck/Desktop/isis/backend/uploads/load"  
 
 # from database.database import DatabaseHandler
 # db_handler = DatabaseHandler()
@@ -43,20 +43,20 @@ def read_weather_data_from_folder(folder_path, file_pattern, date_from, date_to)
 def read_load_data_from_folder(root_folder, date_from, date_to):
     all_dfs = []
 
-    for folder_name in os.listdir(root_folder):
-        if folder_name.endswith("pal_csv") and os.path.isdir(os.path.join(root_folder, folder_name)):
-            folder_path = os.path.join(root_folder, folder_name)
+    # for folder_name in os.listdir(root_folder):
+    #     if folder_name.endswith("pal_csv") and os.path.isdir(os.path.join(root_folder, folder_name)):
+    #         folder_path = os.path.join(root_folder, folder_name)
 
-            for filename in os.listdir(folder_path):
-                if filename.endswith(".csv"):
-                    file_path = os.path.join(folder_path, filename)
-                    # Read CSV into DataFrame
-                    df = pd.read_csv(file_path)
+    for filename in os.listdir(root_folder):
+        if filename.endswith(".csv"):
+            file_path = os.path.join(root_folder, filename)
+            # Read CSV into DataFrame
+            df = pd.read_csv(file_path)
 
-                    df = df[df['Name'] == 'N.Y.C.']
+            df = df[df['Name'] == 'N.Y.C.']
 
-                    # Append DataFrame to the list
-                    all_dfs.append(df)
+            # Append DataFrame to the list
+            all_dfs.append(df)
 
     concated_dfs = concat_dataframes_into_df(all_dfs)
     removed_nulls_df = remove_nulls_from_dataframes(concated_dfs)
@@ -77,9 +77,6 @@ def merge_load_and_weather_data(date_from_train, date_to_train):
     
     dfs_weather = read_and_modify_weather_data(date_from_train, date_to_train)
     dfs_load = read_and_modify_load_data(date_from_train, date_to_train)
-
-
-    print(dfs_load)
 
     df_weather_reset = dfs_weather.reset_index()
     # Rename the "index" column to "datetime"
@@ -203,7 +200,6 @@ def remove_special_dates(df):
    
     df = df[~df['datetime'].dt.date.isin(special_dates.dt.date)]
      
-    print(len(df))
     return df
 
 def remove_covid_lockdown_dates_in_new_york(df):
@@ -244,7 +240,6 @@ def encode_conditions_column(df_conditions):
     df_conditions = df_conditions.replace(0, method='ffill') 
     df_conditions = df_conditions.replace(0, method='bfill') # in case there is no previous non zero value
 
-    print(df_conditions)
     df_cat_1hot = cat_encoder.fit_transform(df_conditions)
     return df_cat_1hot
 
@@ -426,19 +421,20 @@ def do_final_preparations_for_model(date_from_train,date_to_train):
     dataframe = remove_covid_lockdown_dates_in_new_york(dataframe)
     dataframe = dataframe.reset_index()
 
-    print(dataframe)
 
     dataframe = dataframe.sort_values(by='datetime')
     dataframe = create_columns_for_day_type(dataframe)
     dataframe = create_month_type(dataframe)
-    
+    try:
     # df_with_dates = dataframe.copy()
-    prepared_load = dataframe['Load'] 
-    print(prepared_load.count())
-    print(prepared_load)
+        prepared_load = dataframe[['Load','datetime']] 
+        print(prepared_load)
     
+        db_handler.write_load_data(prepared_load)
+    except Exception as e:
+        print(e)
     prepared_dataframe = remove_columns_(dataframe)
-    print(prepared_dataframe.count())
+
     db_handler.write_preprocessed_data(prepared_dataframe)
 
     df_with_dates, prepared_dataframe = db_handler.read_preprocessed_data()

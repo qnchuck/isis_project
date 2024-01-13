@@ -17,3 +17,12 @@ def train_model():
         return jsonify({'success': True})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+    
+@training_controller.route('/preprocess_data', methods=['POST'])
+def preprocess_data():
+    try:
+        datefrom = request.get_json()['startDate']
+        dateto = request.get_json()['endDate']
+        train_service.preprocess_data(datefrom, dateto)
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})

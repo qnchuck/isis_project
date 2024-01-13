@@ -14,6 +14,7 @@ class TrainService:
         
         num_prepared, y, df_with_dates = do_final_preparations_for_model(date_from, date_to)
 
+        y = y['Load']
         num_prepared = model_create.fit_transform_pipeline(num_prepared)
 
         X_train, X_test, y_train, y_test = train_test_split(num_prepared, y, test_size=0.2, random_state=42)
@@ -82,3 +83,6 @@ class TrainService:
 
         # Call the data layer (model training service) to start the training
         return []
+
+    def preprocess_data(date_from, date_to):
+        do_final_preparations_for_model(date_from, date_to)
