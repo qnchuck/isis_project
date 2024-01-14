@@ -191,12 +191,10 @@ def read_and_modify_load_data(datefrom, dateto):
 
 
 def remove_special_dates(df):
-    # Read the Excel file into a DataFrame
     df_special = pd.read_excel(excel_file_path)
     
     special_dates = df_special['Unnamed: 2']
 
-    # Loop through each DataFrame in the list
    
     df = df[~df['datetime'].dt.date.isin(special_dates.dt.date)]
      
@@ -206,10 +204,8 @@ def remove_covid_lockdown_dates_in_new_york(df):
     lockdown_start_date = "2020-01-01"
     lockdown_end_date = "2020-12-31"  # Adjust the end date as needed
 
-    # Convert 'datetime' column to datetime type
     df['datetime'] = pd.to_datetime(df['datetime'])
 
-    # Exclude dates within the lockdown period
     df_filtered = df[~((df['datetime'] >= lockdown_start_date) & (df['datetime'] <= lockdown_end_date))]
 
     return df_filtered
@@ -293,7 +289,7 @@ def remove_extreme_ouliers_for_temp(df_with_extreme_values, column_name):
     return df_with_extreme_values
 
 def remove_unnecessary_columns(dataframe):
-    df_with_num_columns = dataframe.drop(['Load','name','level_0_x','precipprob', 'severerisk','uvindex','snowdepth','solarenergy','preciptype','snow','day_of_week',], axis=1) 
+    df_with_num_columns = dataframe.drop(['Load','name','level_0_x','precipprob','precip', 'severerisk','uvindex','snowdepth','solarenergy','preciptype','snow','day_of_week',], axis=1) 
     
     df_with_num_columns.to_csv('head_columns.csv', index=False)
     
@@ -303,7 +299,7 @@ def remove_unnecessary_columns(dataframe):
     return df_with_num_columns
 
 def remove_columns_(dataframe):
-    df_with_num_columns = dataframe.drop(['Load','name','level_0_x','precipprob', 'severerisk','uvindex','snowdepth','solarenergy','preciptype','snow','day_of_week',], axis=1) 
+    df_with_num_columns = dataframe.drop(['Load','name','level_0_x','precipprob','precip','severerisk','uvindex','snowdepth','solarenergy','preciptype','snow','day_of_week',], axis=1) 
     return df_with_num_columns
 
 def save_into_database(dataframe):
@@ -328,8 +324,8 @@ def calculate_heat_index(temperature, humidity):
 def create_month_type(df_without_month_type):
     # Define a mapping from month to season
     month_to_season = {
-        1: 0,  # Winter
-        2: 0,  # Winter
+        1: 4,  # Winter
+        2: 4,  # Winter
         3: 1,  # Spring
         4: 1,  # Spring
         5: 1,  # Spring
@@ -339,7 +335,7 @@ def create_month_type(df_without_month_type):
         9: 3,  # Fall
         10: 3,  # Fall
         11: 3,  # Fall
-        12: 0,  # Winter
+        12: 4,  # Winter
     }
 
 

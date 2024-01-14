@@ -1,26 +1,39 @@
-<div class="forecast-selector-container">
+<div class="forecast-selector-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: auto;">
+
+  <mat-form-field appearance="fill">
+    <mat-label>Date:</mat-label>
+    <input matInput type="date" min="2018-01-01" max="2021-09-20" [(ngModel)]="selectedDate">
+  </mat-form-field>
+  <div style="margin-top: 16px;">
+    <mat-form-field appearance="fill">
+      <mat-label>Select Model:</mat-label>
+      <mat-select [(ngModel)]="selectedModel" (openedChange)="onSelectDropdownOpen($event)">
+        <mat-option *ngFor="let modelName of modelNames" [value]="modelName">
+          {{ modelName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
   
-    <label>Date:</label>
-    <input type="date" [(ngModel)]="selectedDate">
-  
-    <div>
-      <label for="numOfDays">Number of Days:</label>
-      <select id="numOfDays" [(ngModel)]="numberOfDays">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-      </select>
-    </div>
-  
-    <button (click)="startForecast()">Start Forecast</button>
-  
- 
-  <!-- table.component.html -->
-  <div class="table-container">
+
+  <div style="margin-top: 16px;">
+    <mat-form-field appearance="fill">
+      <mat-label>Number of Days:</mat-label>
+      <mat-select [(ngModel)]="numberOfDays" id="numOfDays">
+        <mat-option value="1">1</mat-option>
+        <mat-option value="2">2</mat-option>
+        <mat-option value="3">3</mat-option>
+        <mat-option value="4">4</mat-option>
+        <mat-option value="5">5</mat-option>
+        <mat-option value="6">6</mat-option>
+        <mat-option value="7">7</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <button mat-raised-button color="primary" (click)="startForecast()" style="margin-top: 16px;">Start Forecast</button>
+
+  <div class="table-container" style="width: 50%; margin: auto; overflow: auto;">
     <table>
       <thead>
         <tr>
@@ -36,19 +49,4 @@
       </tbody>
     </table>
   </div>
-  
-  <table style="border: black;">
-    <thead>
-      <tr>
-        <th>datetime</th>
-        <th>Load</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let s of forecastData">
-        <td >{{ s.datetime }}</td>
-        <td >{{ s.Load }}</td>
-      </tr>
-    </tbody>
-  </table>
 </div>

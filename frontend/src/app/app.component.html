@@ -1,11 +1,37 @@
-<div>
-    <h1>FORECAST WEB APP</h1>
-  
-    <app-folder-browser></app-folder-browser>
-  
-    <app-training-date-selector></app-training-date-selector>
-  
-   
-    <app-forecast-selector></app-forecast-selector>
+<div style="display: flex; gap: 16px; justify-content: space-around; align-items: flex-start; height: 100vh; padding: 16px;">
+
+  <div>
+    <!-- Card for Folder Browser -->
+    <mat-card style="flex: 1 0 300px; margin-bottom: 16px;">
+      <mat-card-header>
+        <mat-card-title>Folder Browser</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <app-folder-browser></app-folder-browser>
+      </mat-card-content>
+    </mat-card>
   </div>
-  
+
+  <div>
+    <!-- Card for Training Date Selector -->
+    <mat-card style="flex: 1 0 300px; margin-bottom: 16px;">
+      <mat-card-header>
+        <mat-card-title>Training Date Selector</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <app-training-date-selector></app-training-date-selector>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Card for Forecast Selector (taking the second half of the page) -->
+  <mat-card style="flex: 1 0 calc(50% - 16px);">
+    <mat-card-header>
+      <mat-card-title>Forecast Selector</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <app-forecast-selector></app-forecast-selector>
+    </mat-card-content>
+  </mat-card>
+
+</div>

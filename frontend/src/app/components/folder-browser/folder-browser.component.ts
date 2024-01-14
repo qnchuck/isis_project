@@ -1,7 +1,7 @@
 // folder-browser.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FileService } from '../../services/file.service';
-
+import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-folder-browser',
   templateUrl: './folder-browser.component.html',

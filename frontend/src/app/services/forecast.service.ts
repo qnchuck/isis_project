@@ -9,9 +9,13 @@ export class ForecastService {
 
   constructor(private http: HttpClient) {}
 
-  startForecast(date: string, days: number): Observable<any> {
-    // Adjust the API endpoint and parameters based on your backend implementation
-    const url = `${this.baseUrl}/predict?date=${date}&days=${days}`;
+  startForecast(date: string, days: number, modelName: string): Observable<any> {
+    const url = `${this.baseUrl}/predict?date=${date}&days=${days}&modelName=${modelName}`;
     return this.http.get(url);
+  }
+  
+
+  getModelNames(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/models`);
   }
 }

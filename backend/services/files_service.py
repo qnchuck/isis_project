@@ -23,14 +23,9 @@ class FilesService:
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'csv'}
     
     def save_file_to_specific_directory(self, file):
-         # Check if the file is present and has an allowed extension
         if file and self.allowed_file(file.filename):
-        # Create subfolder based on filename
             subfolder = self.determine_subfolder(file.filename)
 
-            # Create subfolder if it doesn't exist
-        
-            # Save the file in the determined subfolder
             if file and self.allowed_file(file.filename):
                 filename = os.path.join(UPLOAD_FOLDER+subfolder, file.filename)
                 file.save(filename)

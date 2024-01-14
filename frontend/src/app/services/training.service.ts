@@ -15,4 +15,8 @@ export class TrainingService {
     const data = { startDate, endDate };
     return this.http.post(`${this.apiUrl}/train_model`, data);
   }
+  doPreprocessing(startDate: string, endDate: string):Observable<any>{
+    const data = { startDate, endDate };
+    return this.http.post(`${this.apiUrl}/preprocess`, data);
+  }
 }

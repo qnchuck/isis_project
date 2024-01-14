@@ -12,8 +12,8 @@ class DatabaseHandler():
     def __init__(self):
         self.engine = create_engine(f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}')
 
-    def read_preprocessed_data(self):
-        query = f'SELECT * FROM weather_data'
+    def read_preprocessed_data(self, start_date, end_date):
+        query = f"SELECT * FROM weather_data WHERE datetime BETWEEN '{start_date}' AND '{end_date}'"
         df_with_datetime = pd.read_sql(query, self.engine)
         df_dropped_datetime = df_with_datetime.drop("datetime", axis=1)
         return df_with_datetime, df_dropped_datetime
@@ -27,14 +27,17 @@ class DatabaseHandler():
         df = pd.DataFrame(new_data)
         df.to_sql('weather_data', self.engine, if_exists='replace', index=False)
     
-    def read_load_data(self, start_datetime, num_days):
-        query = f'''
-        SELECT * FROM load_data
-        WHERE datetime >= '{start_datetime}' AND datetime < '{start_datetime}' + interval '{num_days} days'
-        '''
+    def read_load_data_by_date(self, start_date, end_date):
+        query = f"SELECT * FROM load_data WHERE datetime BETWEEN '{start_date}' AND '{end_date}'"
+
+        # Read data from the database into a DataFrame
+        df = pd.read_sql(query, self.engine)
+        return df
+    
+    def read_preprocessed_data_for_forecast(self):
+        query = f'SELECT * FROM weather_data'
         df_with_datetime = pd.read_sql(query, self.engine)
         df_dropped_datetime = df_with_datetime.drop("datetime", axis=1)
-      
         return df_with_datetime, df_dropped_datetime
     
     def write_load_data(self, new_data):
@@ -60,3 +63,6 @@ class DatabaseHandler():
       
         return df_with_datetime, df_dropped_datetime
 
+    def write_forecast(self, df_load):
+        df_load.to_sql('forecast_data', self.engine, if_exists='replace', index=False)
+        

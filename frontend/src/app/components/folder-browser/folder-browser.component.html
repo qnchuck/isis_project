@@ -1,8 +1,13 @@
-<!-- folder-browser.component.html -->
-<div class="text-center">
-  <input class="form-control" type="file" (change)="onChange($event)" multiple directory webkitdirectory>
+<!-- Your component's HTML file -->
+<div style="width: 25%; margin: auto;">
 
-  <button (click)="onUpload()" class="btn btn-success" [disabled]="loading">
+  <label for="fileInput" class="mat-button">
+    <input type="file" id="fileInput" (change)="onChange($event)" multiple directory webkitdirectory style="display: none;">
+    <mat-icon>attach_file</mat-icon> Choose Files
+  </label>
+
+  <button mat-raised-button color="primary" (click)="onUpload()" [disabled]="loading">
     {{ loading ? 'Uploading...' : 'Upload' }}
   </button>
+
 </div>

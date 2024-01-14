@@ -1,12 +1,19 @@
+<div style="width: 25%; margin:inherit;">
 
-<div>
-  <label for="dateFrom">Select Training Start Date:</label>
-  <input type="date" id="dateFrom" [(ngModel)]="selectedDateFrom" />
+  <mat-form-field appearance="fill">
+    <label>Select Training Start Date:</label>
+    <input matInput type="date" id="dateFrom" min="2018-01-01" max="2021-09-20"  [(ngModel)]="selectedDateFrom" />
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <label>Select Training End Date:</label>
+    <input matInput type="date" id="dateTo" min="2018-01-01" max="2021-09-20"  [(ngModel)]="selectedDateTo" />
+  </mat-form-field>
+
+  <div class="wide-buttons" style="width: max-content;">
+    <button mat-raised-button color="accent" (click)="preprocessData()">Preprocess imported data</button>
+    <br/>
+    <button mat-raised-button color="accent" (click)="sendDatesForTraining()">Do training for preprocessed data</button>
+  </div>
+  
 </div>
-
-<div>
-  <label for="dateTo">Select Training End Date:</label>
-  <input type="date" id="dateTo" [(ngModel)]="selectedDateTo" />
-</div>
-
-<button (click)="sendDatesForTraining()">Send Dates</button>
