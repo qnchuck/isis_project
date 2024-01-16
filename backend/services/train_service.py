@@ -21,16 +21,16 @@ class TrainService:
             
             y = y['Load']
             num_prepared = model_create.fit_transform_pipeline(df_without_dates)
-
+            
             X_train, X_test, y_train, y_test = train_test_split(num_prepared, y, test_size=0.2, random_state=42)
-
+            
             
             rows_per_day = 24  # Assuming hourly data
             last_seven_days_rows = 7 * rows_per_day
 
 
-            X_test = num_prepared[-last_seven_days_rows:, :]
-            y_test = y[-last_seven_days_rows:]
+            # X_test = num_prepared[-last_seven_days_rows:, :]
+            # y_test = y[-last_seven_days_rows:]
 
             model = model_create.create_model(X_train)
 
@@ -103,7 +103,6 @@ class TrainService:
 
     def preprocess_data(self, date_from, date_to):
         try:
-            print('here')
             do_final_preparations_for_model(date_from, date_to)
             return True
         except:

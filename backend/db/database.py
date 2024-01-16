@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 import pandas as pd
 from datetime import datetime, timedelta
 # Replace these variables with your actual database connection details
@@ -24,9 +24,11 @@ class DatabaseHandler():
         return df
 
     def write_preprocessed_data(self, new_data):
-        df = pd.DataFrame(new_data)
-        df.to_sql('weather_data', self.engine, if_exists='replace', index=False)
-    
+        try:
+            df = pd.DataFrame(new_data)
+            df.to_sql('weather_data', self.engine, if_exists='replace', index=False)
+        except Exception as e:
+            print("ERROR IN DATABASE,py",e)
     def read_load_data_by_date(self, start_date, end_date):
         query = f"SELECT * FROM load_data WHERE datetime BETWEEN '{start_date}' AND '{end_date}'"
 
@@ -66,3 +68,23 @@ class DatabaseHandler():
     def write_forecast(self, df_load):
         df_load.to_sql('forecast_data', self.engine, if_exists='replace', index=False)
         
+    def get_max_dates_from_tables(self):
+        weather_data_query = "SELECT MAX(datetime) FROM weather_data;"
+        load_data_query = "SELECT MAX(datetime) FROM load_data;"
+
+        print('im here')
+
+        try:
+            with self.engine.connect() as connection:
+                # Execute the queries
+                max_datetime_weather_data = connection.execute(text(weather_data_query)).scalar()
+                max_datetime_load_data = connection.execute(text(load_data_query)).scalar()
+
+                # Print or use the results
+                print("Max datetime in weather_data:", max_datetime_weather_data)
+                print("Max datetime in load_data:", max_datetime_load_data)
+                
+                return max_datetime_weather_data
+        except Exception as e:
+            print("Error:", e)
+            

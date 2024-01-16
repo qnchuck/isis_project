@@ -22,28 +22,32 @@ export class TrainingDateSelectorComponent {
   }
 
   sendDatesForTraining(): void {
-    if (this.isYearValid(this.selectedDateFrom) && this.isYearValid(this.selectedDateTo)) {
-      if (this.selectedDateFrom && this.selectedDateTo) {
-        if (this.isDateFromBeforeDateTo()) {
-          this.dateService
-            .startTraining(this.selectedDateFrom, this.selectedDateTo)
-            .subscribe(
-              (response) => {
-                this.openDialog("Training done succesfully");
-                console.log('Response from server:', response);
-              },
-              (error) => {
-                console.error('Error:', error);
-              }
-            );
+    if(this.isEndDateForTrainingValid()){
+      if (this.isYearValid(this.selectedDateFrom) && this.isYearValid(this.selectedDateTo)) {
+        if (this.selectedDateFrom && this.selectedDateTo) {
+          if (this.isDateFromBeforeDateTo()) {
+            this.dateService
+              .startTraining(this.selectedDateFrom, this.selectedDateTo)
+              .subscribe(
+                (response) => {
+                  this.openDialog("Training done succesfully");
+                  console.log('Response from server:', response);
+                },
+                (error) => {
+                  console.error('Error:', error);
+                }
+              );
+          } else {
+            this.openDialog('Start date must be before end date.');
+          }
         } else {
-          this.openDialog('Start date must be before end date.');
+          this.openDialog('Please select both start and end dates.');
         }
       } else {
-        this.openDialog('Please select both start and end dates.');
+        this.openDialog('Selected year should not be 2020.');
       }
-    } else {
-      this.openDialog('Selected year should not be 2020.');
+    }else{
+      this.openDialog('Selected date to for training must be before 06.09.2021.');
     }
   }
 
@@ -55,7 +59,7 @@ export class TrainingDateSelectorComponent {
             .doPreprocessing(this.selectedDateFrom, this.selectedDateTo)
             .subscribe(
               (response) => {
-                this.openDialog('Training done!');
+                this.openDialog('Preprocessing done!');
                 console.log('Response from server:', response);
               },
               (error) => {
@@ -79,6 +83,11 @@ export class TrainingDateSelectorComponent {
 
   private isYearValid(date: string | undefined): boolean {
     return date ? new Date(date).getFullYear() !== 2020 : false;
+  }
+  private isEndDateForTrainingValid(): boolean{
+    if ( new Date(this.selectedDateTo!)>new Date('2021-09-06')){
+      return false;
+    }else{ return true;}
   }
 }
 

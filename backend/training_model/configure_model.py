@@ -1,5 +1,5 @@
-EPOCH_NUMBER = 200 # best result
-BATCH_SIZE_NUMBER = 64 # best result, ask for an info about batch size
+EPOCH_NUMBER = 150 # best result
+BATCH_SIZE_NUMBER = 32 # best result, ask for an info about batch size
 COST_FUNCTION = 'mean_absolute_error'
 LEARNING_RATE_ADAM = 0.001
 ACTIVATION_RELU = 'relu'

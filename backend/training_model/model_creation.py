@@ -9,6 +9,7 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras import regularizers
 from sklearn.preprocessing import StandardScaler,OneHotEncoder, MinMaxScaler
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
@@ -118,6 +119,16 @@ class ModelCreation(ModelConfiguration):
         
     #     return X_train_weighted, X_test_weighted
 
+    # def create_model(self, X_train):
+    #     model = Sequential([
+    #         Dense(256, input_dim=X_train.shape[1] , activation=self.activation_relu),
+    #         Dense(128, activation=self.activation_relu),
+    #         Dense(64, activation=self.activation_relu),
+    #         Dense(32, activation=self.activation_relu),
+    #         Dense(1, activation=self.activation_linear)
+    #     ])
+    #     return model
+    
     def create_model(self, X_train):
         model = Sequential([
             Dense(self.number_of_neurons_in_first_and_third_hidden_layer, input_dim=X_train.shape[1] , activation=self.activation_relu),
@@ -126,7 +137,6 @@ class ModelCreation(ModelConfiguration):
             Dense(self.number_of_neurons_in_fourth_hidden_layer, activation=self.activation_linear)
         ])
         return model
-    
     def compile_fit_predict(self, X_train, X_test, y_train):
                 
         self.model = self.create_model(X_train)

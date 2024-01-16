@@ -5,6 +5,9 @@
     <input type="file" id="fileInput" (change)="onChange($event)" multiple directory webkitdirectory style="display: none;">
     <mat-icon>attach_file</mat-icon> Choose Files
   </label>
+  <br>
+  <!-- Display the number of selected files -->
+  <span *ngIf="files.length > 0">{{ files.length }} file(s) selected</span>
 
   <button mat-raised-button color="primary" (click)="onUpload()" [disabled]="loading">
     {{ loading ? 'Uploading...' : 'Upload' }}

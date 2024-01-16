@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import glob
+from datetime import datetime
 import os 
 from db.database import DatabaseHandler
 import tensorflow as tf
@@ -66,8 +67,14 @@ def read_load_data_from_folder(root_folder, date_from, date_to):
 
     return removed_nulls_df
 
-def filter_data_by_date_range(df, date_column, date_from, date_to):
+def filter_data_by_date_range(df, date_column, date_from, date_to):  
+    print(type(date_from))
+
+    date_from = np.datetime64(date_from)
+    date_to = np.datetime64(date_to)
     df[date_column] = pd.to_datetime(df[date_column])
+    print(type(df[date_column][3]))
+    print(type(date_from))
     df = df[(df[date_column] >= date_from) & (df[date_column] <= date_to)]
     return df
 
@@ -77,7 +84,7 @@ def merge_load_and_weather_data(date_from_train, date_to_train):
     
     dfs_weather = read_and_modify_weather_data(date_from_train, date_to_train)
     dfs_load = read_and_modify_load_data(date_from_train, date_to_train)
-
+    print(date_to_train)
     df_weather_reset = dfs_weather.reset_index()
     # Rename the "index" column to "datetime"
     df_weather_reset = df_weather_reset.rename(columns={'index': 'datetime'})
@@ -301,6 +308,9 @@ def remove_unnecessary_columns(dataframe):
 def remove_columns_(dataframe):
     df_with_num_columns = dataframe.drop(['Load','name','level_0_x','precipprob','precip','severerisk','uvindex','snowdepth','solarenergy','preciptype','snow','day_of_week',], axis=1) 
     return df_with_num_columns
+def remove_columns_additonal_dates(dataframe):
+    df_with_num_columns = dataframe.drop(['name','level_0','precipprob','precip','severerisk','uvindex','snowdepth','solarenergy','preciptype','snow','day_of_week',], axis=1) 
+    return df_with_num_columns
 
 def save_into_database(dataframe):
     return True
@@ -353,8 +363,13 @@ def create_additional_columns(dataframe):
     
     dataframe['datetime'] = pd.to_datetime(dataframe['datetime'])
     dataframe['day_of_week'] = dataframe['datetime'].dt.dayofweek
-    dataframe['day_of_year_sin'] = np.sin(2 * np.pi * dataframe['datetime'].dt.dayofyear / 365.25)
+    dataframe['day_of_year_sin'] = np.sin(2 * np.pi * dataframe['datetime'].dt.dayofyear / 365)
     dataframe['day_of_week_sin'] = np.sin(2 * np.pi * dataframe['datetime'].dt.dayofweek / 7)
+    dataframe['hour_sin'] = np.sin(2 * np.pi * dataframe['datetime'].dt.hour / 24)
+    
+    dataframe['day_of_year_cos'] = np.cos(2 * np.pi * dataframe['datetime'].dt.dayofyear / 365)
+    dataframe['day_of_week_cos'] = np.cos(2 * np.pi * dataframe['datetime'].dt.dayofweek / 7)
+    dataframe['hour_cos'] = np.cos(2 * np.pi * dataframe['datetime'].dt.hour / 24)
 
     return dataframe
 
@@ -407,35 +422,83 @@ def remove_columns_with_zero_values(dataframe):
     return dataframe
     
 def do_final_preparations_for_model(date_from_train,date_to_train):
-
+    date_from_train = '2018-01-01'
+    date_to_train = '2021-09-20'
     dataframe = merge_load_and_weather_data(date_from_train, date_to_train)
-   
-    # dataframe = merge_load_and_weather_data()
-    dataframe = remove_extreme_ouliers_for_temp(dataframe, 'temp')
-    dataframe = create_additional_columns(dataframe)
-    dataframe = remove_special_dates(dataframe)
-    dataframe = remove_covid_lockdown_dates_in_new_york(dataframe)
-    dataframe = dataframe.reset_index()
-
-
-    dataframe = dataframe.sort_values(by='datetime')
-    dataframe = create_columns_for_day_type(dataframe)
-    dataframe = create_month_type(dataframe)
+    print('im here')
     try:
-    # df_with_dates = dataframe.copy()
-        prepared_load = dataframe[['Load','datetime']] 
-        print(prepared_load)
-    
-        db_handler.write_load_data(prepared_load)
+        dataframe = remove_extreme_ouliers_for_temp(dataframe, 'temp')
+        dataframe = create_additional_columns(dataframe)
+        dataframe = remove_special_dates(dataframe)
+        # dataframe = remove_covid_lockdown_dates_in_new_york(dataframe)
+        dataframe = dataframe.reset_index()
+
+
+        dataframe = dataframe.sort_values(by='datetime')
+        # dataframe = create_columns_for_day_type(dataframe)
+        # dataframe = create_month_type(dataframe)
+        try:
+        # df_with_dates = dataframe.copy()
+            prepared_load = dataframe[['Load','datetime']] 
+            # print(prepared_load)
+        
+            db_handler.write_load_data(prepared_load)
+        except Exception as e:
+            print("EXCEPTION IN WRITE LOAD ",e)
+        prepared_dataframe = remove_columns_(dataframe)
+
+        db_handler.write_preprocessed_data(prepared_dataframe)
+
+        df_with_dates, prepared_dataframe___ = db_handler.read_preprocessed_data(date_from_train, date_to_train)
+        import traceback
+        max_weather_date = db_handler.get_max_dates_from_tables().date()
+        date_object_ = datetime.strptime(date_to_train, '%Y-%m-%d').date()
+        
+        print("sent date:",date_to_train)
+        print("weather date from db:",max_weather_date)
+        # date_object_db = datetime.strptime(max_weather_date, '%Y-%m-%d').date()
+        if date_object_!= max_weather_date:
+            from datetime import timedelta
+            print("sent date:",date_to_train)
+            print("weather date from db:",max_weather_date)
+            max_weather_date = max_weather_date + timedelta(days=1)
+            dfs_weather = read_and_modify_weather_data(max_weather_date, date_object_)
+            df_weather_reset = dfs_weather.reset_index()
+            # Rename the "index" column to "datetime"
+            df_weather_reset = df_weather_reset.rename(columns={'index': 'datetime'})
+            dataframe = df_weather_reset
+            dataframe = remove_extreme_ouliers_for_temp(dataframe, 'temp')
+            dataframe = create_additional_columns(dataframe)
+            dataframe = remove_special_dates(dataframe)
+            # dataframe = remove_covid_lockdown_dates_in_new_york(dataframe)
+            dataframe = dataframe.reset_index()
+
+
+            dataframe = dataframe.sort_values(by='datetime')
+            # dataframe = create_columns_for_day_type(dataframe)
+            # dataframe = create_month_type(dataframe)
+            prepared_dataframe_additional = remove_columns_additonal_dates(dataframe)
+            # df_to_db = pd.merge(prepared_dataframe, prepared_dataframe_additional, on='datetime', how='outer', suffixes=('_df1', '_df2'))
+            df_to_db = pd.concat([prepared_dataframe, prepared_dataframe_additional], ignore_index=True)  # ignore_index resets the index
+            # df_to_db = prepared_dataframe + prepared_dataframe_additional
+            print("shape : ",prepared_dataframe_additional.shape)
+            print(prepared_dataframe.shape)
+            print(df_to_db.shape)
+            print("df head : ",prepared_dataframe_additional.head(0))
+            print(prepared_dataframe.head(0))
+            print(df_to_db.head(0))
+            db_handler.write_preprocessed_data(df_to_db)
+        else:
+            db_handler.write_preprocessed_data(prepared_dataframe)
+
+        # if date_to_train != max_weather_date:
+        
+        return  prepared_dataframe, prepared_load, df_with_dates
+
     except Exception as e:
-        print(e)
-    prepared_dataframe = remove_columns_(dataframe)
-
-    db_handler.write_preprocessed_data(prepared_dataframe)
-
-    df_with_dates, prepared_dataframe = db_handler.read_preprocessed_data()
-    return prepared_dataframe, prepared_load, df_with_dates
-
+        traceback.print_exc()
+        print("ERROR: ", e)
+        return []
 # your_dataframe = merge_load_and_weather_data()
 
 # df_cat = encode_conditions_column(your_dataframe[["conditions"]])
@@ -456,6 +519,7 @@ def do_final_preparations_for_model(date_from_train,date_to_train):
 
 # # Create a boolean mask to identify extreme values
 # outliers_mask = (abs(z_scores) > threshold)
+
 
 # # Remove extreme outliers and create a new DataFrame
 # df_no_outliers = your_dataframe[~outliers_mask] 

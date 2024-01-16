@@ -21,7 +21,8 @@ class PredictService:
         # print(date_from)
         df,df_ = db_handler.read_preprocessed_data_for_forecast()
        
-
+        print(len(df))
+        print(len(df_))
         prepared_data = self.model_creation.fit_transform_pipeline(df_)
         
         date_time_column, extracted_data = self.model_creation.extract_data_by_date_range(prepared_data, df, date_from, num_of_days)
